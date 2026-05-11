@@ -221,7 +221,18 @@ async def update_half_life(request: UpdateHalfLifeRequest):
 @app.post("/calculate-retention")
 async def calculate_retention(request: RetentionRequest):
     """
-    R = 2 ^ (-t / h)
+    Computes current memory retention using the Ebbinghaus forgetting curve model.
+    
+    Formula: R(t) = M * 2^(-t/h)
+    
+    Args:
+        request (RetentionRequest): Contains M (implied 100%), half_life (h), and hours_passed (t).
+        
+    Returns:
+        dict: The clamped retention percentage [0, 100].
+        
+    Note: This architecture strictly avoids traditional SRS algorithms (like SM-2) 
+    in favor of pure continuous Half-Life Regression.
     """
     h = max(0.1, float(request.half_life or 0.1))
     t = float(request.hours_passed or 0)

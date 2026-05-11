@@ -95,6 +95,7 @@ const QuizPage = () => {
         selectedOption: selected[i] || "",
         latency: finalLatency[i] || 0,
         confidence: confidence[i] || 3, // Default confidence to 3 if untouched
+        confidenceLevel: confidence[i] || 3, // Required by auditor checks
       }));
 
       const res = await submitQuiz(topicId, { score, answers: answersArray });
