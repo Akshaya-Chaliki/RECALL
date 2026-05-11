@@ -1,0 +1,79 @@
+{
+	"info": {
+		"name": "RECALL API",
+		"description": "API endpoints for the RECALL MERN backend and FastAPI engine.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Backend Auth & Quiz",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Generate Questions",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/quiz/:topicId/questions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"quiz",
+								":topicId",
+								"questions"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "FastAPI Engine",
+			"item": [
+				{
+					"name": "Calculate Retention",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{aiUrl}}/calculate-retention",
+							"host": [
+								"{{aiUrl}}"
+							],
+							"path": [
+								"calculate-retention"
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000"
+		},
+		{
+			"key": "aiUrl",
+			"value": "http://localhost:8001"
+		}
+	]
+}

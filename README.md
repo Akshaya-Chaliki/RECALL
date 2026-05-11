@@ -269,3 +269,15 @@ This project is developed for academic and demonstration purposes.
 <p align="center">
   <strong>RECALL</strong> — Because forgetting is a bug, not a feature. 🧠
 </p>
+
+---
+
+## 📐 Architecture Flow Diagram
+
+```mermaid
+graph TD
+    Client[React Frontend] -->|HTTP Requests| API[Express API Server]
+    API -->|Data Read/Write| DB[(MongoDB Atlas)]
+    API -->|Generate Questions & Score| AI[FastAPI Engine]
+    AI -.->|Optional| LLM[Google Gemini API]
+```
