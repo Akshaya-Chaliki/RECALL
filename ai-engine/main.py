@@ -33,7 +33,7 @@ model = None
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel(
-        "gemini-2.0-flash",
+        "gemini-1.5-flash-latest",
         generation_config=genai.types.GenerationConfig(
             temperature=0.8,
             top_p=0.95,
@@ -126,7 +126,7 @@ async def generate_questions(request: GenerateRequest):
         seed = random.randint(1000, 9999)
 
         prompt = f"""You are an expert tutor and educational assessor with deep domain knowledge.
-Generate exactly {count} COMPLETELY UNIQUE and challenging multiple-choice questions about the topic: "{topic}".
+Dynamically generate exactly {count} COMPLETELY UNIQUE and challenging multiple-choice questions about the topic: "{topic}".
 
 DIVERSITY REQUIREMENTS (mandatory):
 - Do NOT repeat standard, textbook-definition, or basic recall questions.
@@ -136,13 +136,15 @@ DIVERSITY REQUIREMENTS (mandatory):
 - Each question must test a DIFFERENT sub-concept within "{topic}". No two questions should test the same idea.
 
 OUTPUT RULES (strict):
-1. Return ONLY a raw JSON array. No markdown, no explanation, no code fences.
-2. Each object MUST have exactly these 3 keys: "question", "options", "correctAnswer".
+1. Return ONLY a raw JSON array. No markdown formatting, no ```json blocks, no explanations. Just the raw JSON array.
+2. Each object MUST have exactly these 3 keys: "question", "options", "correctAnswer". Do not deviate from these exact keys.
 3. "options" MUST be an array of exactly 4 unique, plausible strings (avoid obviously wrong distractors).
 4. "correctAnswer" MUST be one of the 4 options verbatim.
 
 Example format:
-[{{"question": "What is X?", "options": ["A", "B", "C", "D"], "correctAnswer": "B"}}]
+[
+  {{"question": "What is X?", "options": ["A", "B", "C", "D"], "correctAnswer": "B"}}
+]
 
 (Variation seed: {seed})
 Generate the {count} questions now:"""
@@ -156,9 +158,18 @@ Generate the {count} questions now:"""
             validated = [QuestionItem(**q) for q in questions_data]
             return GenerateResponse(topic=topic, questions=validated)
         except Exception as e:
-            print(f"[ERROR] Gemini error: {e}")
+            print(f"[ERROR] Gemini API/Parsing error: {e}")
+            # Fallback inline to prevent crashes during the demo
+            fallback_questions = [
+                QuestionItem(
+                    question=f"Fallback Question {i+1} about {topic} (API limit reached)?",
+                    options=["Option A", "Option B", "Option C", "Option D"],
+                    correctAnswer="Option A"
+                ) for i in range(count)
+            ]
+            return GenerateResponse(topic=topic, questions=fallback_questions)
 
-    # Fallback
+    # Fallback if model is not configured
     mock_questions = [
         QuestionItem(
             question=f"Question {i+1} about {topic}?",

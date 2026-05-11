@@ -5,9 +5,7 @@ import { loginUser } from "../services/api";
 import { Sparkles, LogIn } from "lucide-react";
 
 const LoginPage = () => {
-  // TODO: Replace with dynamic Auth ID from production DB
-  const demoUser = "demo@example.com";
-  const [email, setEmail] = useState(demoUser);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

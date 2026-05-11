@@ -55,12 +55,10 @@ export const entryTest = async (req, res) => {
     }
 
     // Call Python with count=3
-    console.log("started", AI_ENGINE_URL)
     const response = await axios.post(`${AI_ENGINE_URL}/generate-questions`, {
       topic_name: topicName,
       count: 3,
     });
-    console.log("Ended", response)
 
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
