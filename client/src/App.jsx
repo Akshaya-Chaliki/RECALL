@@ -6,6 +6,7 @@ import DashboardPage from "./pages/DashboardPage";
 import QuizPage from "./pages/QuizPage";
 import SkillDetailPage from "./pages/SkillDetailPage";
 import TopicAnalyticsPage from "./pages/TopicAnalyticsPage";
+import FlashcardPage from "./pages/FlashcardPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/dashboard/:topicId" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/quiz/:topicId" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/analytics" element={<ProtectedRoute><TopicAnalyticsPage /></ProtectedRoute>} />
+          <Route path="/topics/:topicId/flashcards" element={<ProtectedRoute><FlashcardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

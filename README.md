@@ -40,7 +40,7 @@ The half-life $h$ is dynamically updated after each assessment using a **behavio
 | Response Latency | 20% | Processing speed = encoding depth |
 | Self-Reported Confidence | 20% | Metacognitive calibration |
 
-This architecture **strictly avoids** SM-2, Leitner, or any interval-based SRS algorithm — retention is computed as a continuous function, not discrete scheduled reviews.
+Inspired by the neuroscience behind spaced repetition, RECALL goes further — replacing rigid interval schedules (SM-2, Leitner) with a **continuous exponential decay model** where retention is computed as a real-time function, not discrete scheduled reviews.
 
 ### Why Not SRS?
 
@@ -109,6 +109,7 @@ RECALL replaces intervals with a **continuous exponential decay curve** (`R(t) =
 - **Professional Readiness Score**: Cross-topic aggregate with tiered badges (Expo Ready / Strong / Moderate / Needs Work)
 - **Skill Mastery View**: Average retention across all topics in a skill with 7-day projection
 - **Interview Readiness Tracker**: Percentage of topics above 80% retention threshold
+- **Optimal Review Prediction**: Calculates exactly when retention will drop below 50% and recommends optimal review timing
 
 ### 🚨 Alert System
 - **RECALL NOW**: Full-screen emergency alert when topic retention drops below 50%
@@ -293,6 +294,9 @@ recall/
 | 🎯 **Adaptive Difficulty** | Medium | AI adjusts question difficulty based on historical performance patterns |
 | 🌐 **Multi-Language Support** | Low | i18n for UI and AI-generated content in multiple languages |
 | 🤝 **Team/Classroom Mode** | Low | Shared skill trees with aggregated class-level retention dashboards |
+| ⏰ **Smart Revision Reminders** | High | Push notifications and email alerts when topic retention drops below configurable thresholds |
+| 📅 **Automated Revision Scheduling** | High | Calendar-integrated scheduling that automatically queues review sessions at AI-predicted optimal intervals |
+| 📈 **Revision Interval Analytics** | Medium | Track and visualize revision frequency, topic interaction patterns, and learning streaks over time |
 
 ---
 
