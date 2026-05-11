@@ -83,7 +83,7 @@ This architecture **strictly avoids** SM-2, Leitner, or any interval-based SRS a
 - Strict Pydantic validation: 4 options per question, correct answer must match option verbatim
 - Automatic fallback to mock questions if Gemini API is unavailable
 
-### 📊 Semantic Grading (Behavioral Scoring)
+### 📊 Behavioral Scoring
 - **Composite behavioral score** (0–5) replaces naive correct/incorrect grading
 - Factors: correctness (60%), response latency (20%), confidence (20%)
 - Behavioral score drives HLR multiplier (0.3× to 2.5×) for half-life updates
@@ -194,7 +194,7 @@ recall/
 │
 ├── README.md                       # This file
 ├── ARCHITECTURE.md                 # Detailed system architecture
-├── REQUIREMENTS.md                 # Functional & non-functional requirements
+├── REQUIREMENTS_TRACEABILITY.md     # Functional & non-functional requirements
 └── REQUIREMENTS_CHECKLIST.md       # Granular feature checklist
 ```
 

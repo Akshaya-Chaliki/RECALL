@@ -3,7 +3,7 @@ import MemoryState from "../models/MemoryState.js";
 import Topic from "../models/Topic.js";
 import Assessment from "../models/Assessment.js";
 
-const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8000";
+const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8001";
 
 /**
  * Computes memory retention using the Ebbinghaus forgetting curve.

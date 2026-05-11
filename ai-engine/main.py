@@ -197,13 +197,18 @@ Return ONLY a raw JSON array of objects with 'front' and 'back' keys."""
 @app.post("/update-half-life")
 async def update_half_life(request: UpdateHalfLifeRequest):
     """
-    HLR-inspired update logic.
-    Score is 0-5.
+    HLR-inspired update logic with behavioral signal integration.
+    
+    Score is 0-5 (composite of correctness, latency, confidence).
+    Latency and confidence provide fine-grained adjustments (±15% max)
+    on top of the base score-driven multiplier.
     """
     score = request.score
     h = request.current_half_life
+    avg_latency = float(request.avg_latency or 0)
+    avg_confidence = float(request.avg_confidence or 3)
     
-    # Basic HLR Multipliers
+    # Base HLR Multipliers (score-driven)
     if score >= 4.5: multiplier = 2.5
     elif score >= 4.0: multiplier = 2.0
     elif score >= 3.0: multiplier = 1.5
@@ -211,9 +216,20 @@ async def update_half_life(request: UpdateHalfLifeRequest):
     elif score >= 1.0: multiplier = 0.6
     else: multiplier = 0.3
     
+    # Behavioral adjustments: latency and confidence fine-tune the multiplier
+    # Fast responses (< 10s avg) indicate strong encoding → slight boost (up to +10%)
+    # Slow responses (> 20s avg) indicate weak recall → slight penalty (up to -10%)
+    latency_adjustment = max(-0.10, min(0.10, (15.0 - avg_latency) / 150.0))
+    
+    # High confidence (4-5) with good score → boost (up to +5%)
+    # Low confidence (1-2) even with ok score → slight penalty (up to -5%)
+    confidence_adjustment = max(-0.05, min(0.05, (avg_confidence - 3.0) / 40.0))
+    
+    multiplier = multiplier * (1.0 + latency_adjustment + confidence_adjustment)
+    
     new_h = h * multiplier
     # Clamps
-    new_h = max(1.0, min(new_h, 8760.0)) # Min 1 hour, max 1 year
+    new_h = max(1.0, min(new_h, 8760.0))  # Min 1 hour, max 1 year
     
     return {"new_half_life": new_h}
 
@@ -241,7 +257,7 @@ async def calculate_retention(request: RetentionRequest):
         retention = math.pow(2, -t / h)
         if math.isnan(retention) or math.isinf(retention):
             retention = 0.0
-    except:
+    except Exception:
         retention = 0.0
         
     return {"retention_percentage": round(retention * 100, 2)}
@@ -263,7 +279,7 @@ async def calculate_projection(request: ProjectionRequest):
             r = m * math.pow(2, -hours / h)
             if math.isnan(r) or math.isinf(r): r = 0.0
             projection.append(ProjectionItem(day=day, retention=round(r, 2)))
-        except:
+        except Exception:
             projection.append(ProjectionItem(day=day, retention=0.0))
             
     return ProjectionResponse(projection=projection)

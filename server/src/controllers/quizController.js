@@ -4,7 +4,7 @@ import Skill from "../models/Skill.js";
 import Assessment from "../models/Assessment.js";
 import MemoryState from "../models/MemoryState.js";
 
-const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8000";
+const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8001";
 
 /**
  * @desc    Generate flashcards via AI Engine (10 pairs)
@@ -28,7 +28,7 @@ export const getFlashcards = async (req, res) => {
   } catch (error) {
     console.error("Error in getFlashcards proxy:", error.message);
     if (error.code === 'ECONNABORTED') {
-       return res.status(504).json({ success: false, message: "AI Engine request timed out. The server might be overloaded." });
+      return res.status(504).json({ success: false, message: "AI Engine request timed out. The server might be overloaded." });
     }
     if (error.response) {
       return res.status(error.response.status).json({
@@ -55,10 +55,12 @@ export const entryTest = async (req, res) => {
     }
 
     // Call Python with count=3
+    console.log("started", AI_ENGINE_URL)
     const response = await axios.post(`${AI_ENGINE_URL}/generate-questions`, {
       topic_name: topicName,
       count: 3,
     });
+    console.log("Ended", response)
 
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
@@ -209,7 +211,7 @@ export const processResults = async (req, res) => {
     const totalQuestions = answers ? answers.length : 5;
     let totalLatency = 0;
     let totalConfidence = 0;
-    
+
     if (answers && answers.length > 0) {
       answers.forEach(a => {
         totalLatency += (a.latency || 0);
@@ -229,8 +231,8 @@ export const processResults = async (req, res) => {
     // Confidence (20%)
     const confidenceScore = (avgConfidence / 5) * 5 * 0.2;
 
-    const behavioralScore = Number.isNaN(correctnessScore + latencyScore + confidenceScore) 
-      ? 0 
+    const behavioralScore = Number.isNaN(correctnessScore + latencyScore + confidenceScore)
+      ? 0
       : correctnessScore + latencyScore + confidenceScore;
 
     // 2. Save the Assessment entry

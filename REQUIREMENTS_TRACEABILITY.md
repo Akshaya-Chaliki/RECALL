@@ -11,7 +11,7 @@
    - [FR-1: Authentication](#fr-1-authentication)
    - [FR-2: Skill/Topic Hierarchy](#fr-2-skilltopic-hierarchy)
    - [FR-3: AI Assessment Engine](#fr-3-ai-assessment-engine)
-   - [FR-4: Semantic Grading](#fr-4-semantic-grading)
+   - [FR-4: Behavioral Scoring](#fr-4-behavioral-scoring)
    - [FR-5: Dynamic Dashboard](#fr-5-dynamic-dashboard)
    - [FR-6: Alert System](#fr-6-alert-system)
 2. [Non-Functional Requirements](#2-non-functional-requirements)
@@ -78,7 +78,7 @@
 
 ---
 
-### FR-4: Semantic Grading
+### FR-4: Behavioral Scoring
 
 | ID | Requirement | Status | Implementation |
 |----|-------------|--------|----------------|

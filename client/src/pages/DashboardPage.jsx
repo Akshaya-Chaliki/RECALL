@@ -146,7 +146,7 @@ const DashboardPage = () => {
             </div>
           </div>
           <button
-            onClick={() => navigate(`/quiz/${topicId}?topic=${encodeURIComponent(topic?.name || "")}`)}
+            onClick={() => navigate(`/quiz/${topicId}?name=${encodeURIComponent(topic?.name || "")}`)}
             className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -238,7 +238,7 @@ const DashboardPage = () => {
                 Take a reinforcement quiz immediately to restore your memory curve.
               </p>
               <button
-                onClick={() => navigate(`/quiz/${topicId}?topic=${encodeURIComponent(topic?.name || "")}`)}
+                onClick={() => navigate(`/quiz/${topicId}?name=${encodeURIComponent(topic?.name || "")}`)}
                 className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white px-12 py-4 rounded-xl text-lg font-bold uppercase tracking-widest shadow-2xl shadow-red-500/30 hover:shadow-red-500/50 transition-all hover:scale-105"
               >
                 RECALL NOW
@@ -252,7 +252,7 @@ const DashboardPage = () => {
               <h2 className="text-xl font-bold text-white mb-2">Take Your Baseline Assessment</h2>
               <p className="text-slate-400 max-w-md mb-6">Complete your first quiz to establish initial memory strength and half-life values.</p>
               <button
-                onClick={() => navigate(`/quiz/${topicId}?topic=${encodeURIComponent(topic?.name || "")}`)}
+                onClick={() => navigate(`/quiz/${topicId}?name=${encodeURIComponent(topic?.name || "")}`)}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-xl font-semibold transition"
               >
                 Start Baseline Quiz →
