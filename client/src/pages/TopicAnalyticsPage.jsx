@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getTopicRetention } from "../services/api";
 import RetentionGraph from "../components/RetentionGraph";
-import { ArrowLeft, Activity, Clock, CalendarClock, AlertTriangle, Zap, Sparkles, BookOpen } from "lucide-react";
+import { ArrowLeft, Activity, Clock, CalendarClock, AlertTriangle, Zap, Sparkles } from "lucide-react";
 
 const TopicAnalyticsPage = () => {
   const { topicId } = useParams();
@@ -44,7 +44,6 @@ const TopicAnalyticsPage = () => {
           }));
           
           if (points.length === 0) {
-            console.log("[TopicAnalytics] No projection from backend — generating client-side fallback");
             const currentR = safeR;
             const h = safeH;
             for (let day = 0; day <= 7; day++) {
@@ -56,9 +55,6 @@ const TopicAnalyticsPage = () => {
           }
           
           setChartData(points);
-          console.log("[TopicAnalytics] Chart Data:", JSON.stringify(points));
-        } else {
-          console.warn("No topic data received from backend");
         }
 
 
@@ -132,12 +128,6 @@ const TopicAnalyticsPage = () => {
           </div>
           {!isRed && !isNew && (
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(`/topics/${topicId}/flashcards?name=${encodeURIComponent(topicName)}`)}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/30 transition-all text-sm font-semibold"
-              >
-                <BookOpen size={18} className="text-indigo-400" /> Quick Review
-              </button>
               <button
                 onClick={() => navigate(`/quiz/${topicId}?name=${encodeURIComponent(topicName)}`)}
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/20 transition-all text-sm font-semibold"

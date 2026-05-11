@@ -1,7 +1,7 @@
 import express from "express";
 import axios from "axios";
 
-const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8000";
+const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8001";
 
 const router = express.Router();
 

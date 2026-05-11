@@ -74,6 +74,15 @@ RECALL follows a **three-tier microservice architecture** with clear separation 
 | **ES Module Consistency** | Both client and server use `import`/`export` syntax throughout |
 | **No SRS Contamination** | Architecture deliberately excludes SM-2, Leitner, or any interval-based algorithms |
 
+### Why Decouple with FastAPI?
+
+The AI tier is deliberately separated from the Node.js backend for the following reasons:
+
+1. **SDK Ecosystem**: The Google Gemini SDK (`google-generativeai`) is Python-native with first-class support for prompt engineering, streaming, and structured output — making Python the natural choice for the LLM integration layer.
+2. **Event Loop Protection**: LLM inference calls to Gemini can take 2–10 seconds. Running these on the Node.js event loop would block all concurrent Express requests. FastAPI's async architecture handles long-running AI calls without starving other users.
+3. **Independent Scaling**: The AI engine can be horizontally scaled independently of the CRUD backend — critical for production, where quiz generation is the most resource-intensive operation.
+4. **Graceful Degradation**: If the FastAPI service goes down, the Express server continues to serve all non-AI features and falls back to local JavaScript math for retention calculations.
+
 ---
 
 ## 2. Data Flow Diagrams
@@ -282,7 +291,7 @@ FastAPI App
 ### 5.2 Gemini Integration
 
 ```
-Request → Prompt Engineering → Gemini 2.0 Flash API → Raw Text
+Request → Prompt Engineering → Gemini 1.5 Flash API → Raw Text
   → Regex strip markdown fences → JSON.parse → Pydantic validation
   → Response (or fallback to mock questions on any failure)
 ```
@@ -544,7 +553,7 @@ All API responses follow:
 
 | Strategy | Implementation |
 |----------|---------------|
-| **Gemini 2.0 Flash** | Fastest Gemini model variant |
+| **Gemini 1.5 Flash** | Fastest Gemini model variant |
 | **Temperature 0.8** | Balanced creativity/consistency |
 | **Regex pre-processing** | Strip markdown fences before JSON parse |
 | **Mock fallback** | Instant response when API key is absent |

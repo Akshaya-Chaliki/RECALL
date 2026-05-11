@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/RECALL-AI%20Powered-blueviolet?style=for-the-badge&logo=brain&logoColor=white" alt="RECALL Badge" />
   <img src="https://img.shields.io/badge/stack-React%20%7C%20Express%20%7C%20FastAPI-blue?style=for-the-badge" alt="Stack" />
-  <img src="https://img.shields.io/badge/AI-Gemini%202.0%20Flash-orange?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" />
+  <img src="https://img.shields.io/badge/AI-Gemini%201.5%20Flash-orange?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License" />
 </p>
 
@@ -9,7 +9,13 @@
 
 > **Intelligent platform that hacks the human forgetting curve.**
 
-RECALL is a full-stack, AI-driven memory retention platform that uses the **Ebbinghaus Forgetting Curve** and **Half-Life Regression (HLR)** to scientifically model, track, and optimize knowledge retention. Unlike traditional flashcard apps that rely on static Spaced Repetition Systems (SRS), RECALL implements a **continuous exponential decay model** with real-time behavioral scoring — providing a mathematically precise view of how your memory evolves over time.
+### The Problem: Cram-and-Forget
+
+Students and professionals routinely cram information before assessments, only to forget up to **80% within days** — the classic **"cram-and-forget" cycle**. Traditional study tools either provide no memory tracking at all, or rely on static Spaced Repetition Systems (SRS) like SM-2 that use rigid, pre-calculated intervals and cannot model the continuous, real-time nature of memory decay.
+
+RECALL directly addresses this by modeling memory decay as a **continuous mathematical function**, giving users a precise, real-time view of exactly how much they remember — and exactly when they need to review.
+
+RECALL is a full-stack, AI-driven memory retention platform that uses the **Ebbinghaus Forgetting Curve** and **Half-Life Regression (HLR)** to scientifically model, track, and optimize knowledge retention. It implements a **continuous exponential decay model** with real-time behavioral scoring — providing a mathematically precise view of how your memory evolves over time.
 
 ---
 
@@ -36,6 +42,16 @@ The half-life $h$ is dynamically updated after each assessment using a **behavio
 
 This architecture **strictly avoids** SM-2, Leitner, or any interval-based SRS algorithm — retention is computed as a continuous function, not discrete scheduled reviews.
 
+### Why Not SRS?
+
+Traditional Spaced Repetition Systems (SM-2, Anki-style) assign **discrete review intervals** (e.g., 1 day → 3 days → 7 days) based on a quality rating. This approach has fundamental limitations:
+
+- **No intra-day modeling**: SRS cannot tell you your retention *right now* — only when your next review is scheduled.
+- **Rigid intervals**: A fixed schedule doesn't adapt to behavioral signals like response speed or self-reported confidence.
+- **Binary outcomes**: Most SRS treat answers as pass/fail; RECALL uses a weighted behavioral score (correctness 60%, latency 20%, confidence 20%).
+
+RECALL replaces intervals with a **continuous exponential decay curve** (`R(t) = M × 2^(-t/h)`), computed in real-time, giving users a live retention percentage at any moment.
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -44,7 +60,7 @@ This architecture **strictly avoids** SM-2, Leitner, or any interval-based SRS a
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────────┐
 │   React Client  │────▶│  Express Server  │────▶│  FastAPI AI Engine   │
 │   (Vite, 5173)  │◀────│  (Node.js, 5000) │◀────│  (Python, 8001)     │
-└─────────────────┘     └────────┬─────────┘     │  • Gemini 2.0 Flash │
+└─────────────────┘     └────────┬─────────┘     │  • Gemini 1.5 Flash │
                                  │               │  • HLR Computation   │
                                  ▼               └─────────────────────┘
                         ┌─────────────────┐
@@ -57,7 +73,7 @@ This architecture **strictly avoids** SM-2, Leitner, or any interval-based SRS a
 |-------|-----------|----------------|
 | **Frontend** | React 18, Vite, Recharts, Lucide, TailwindCSS | SPA with real-time decay visualization |
 | **Backend** | Node.js, Express (ES Modules) | REST API, JWT auth, business logic |
-| **AI Engine** | FastAPI, Google Gemini 2.0 Flash | Question generation, HLR math |
+| **AI Engine** | FastAPI, Google Gemini 1.5 Flash | Question generation, HLR math |
 | **Database** | MongoDB Atlas (Replica Set) | Users, Skills, Topics, MemoryStates, Assessments |
 
 > See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed system design.
@@ -76,7 +92,7 @@ This architecture **strictly avoids** SM-2, Leitner, or any interval-based SRS a
 - Cascade delete: removing a skill purges all associated topics, memory states, and assessments
 - Duplicate prevention with case-insensitive compound indexes
 
-### 🤖 AI Assessment Engine (Gemini 2.0 Flash)
+### 🤖 AI Assessment Engine (Gemini 1.5 Flash)
 - **Entry Test (3 MCQs)**: Calibrates initial half-life when adding a new topic
 - **Review Quiz (5 MCQs)**: Dynamic questions spanning recall, understanding, application, analysis, and evaluation
 - **Flashcard Generation**: 10 front/back pairs for passive review
@@ -153,49 +169,69 @@ Navigate to **http://localhost:5173** — Register, create skills, add topics, a
 
 ```
 recall/
+├── .github/workflows/ci.yml        # GitHub Actions CI pipeline
+├── api-docs/
+│   └── postman_collection.json     # Postman API documentation
+│
 ├── client/                         # React Frontend (Vite)
-│   └── src/
-│       ├── pages/
-│       │   ├── LoginPage.jsx       # Authentication
-│       │   ├── RegisterPage.jsx    # User registration
-│       │   ├── HomePage.jsx        # Skill grid + Priority Review
-│       │   ├── SkillDetailPage.jsx # Topics + Mastery + Entry Test
-│       │   ├── DashboardPage.jsx   # Per-topic Ebbinghaus dashboard
-│       │   ├── QuizPage.jsx        # AI MCQ assessment
-│       │   └── TopicAnalyticsPage.jsx # 7-day projection
-│       ├── components/
-│       │   ├── RetentionGraph.jsx  # Recharts area chart
-│       │   └── SystemStatus.jsx    # API/AI health indicators
-│       ├── context/AuthContext.jsx # JWT auth state management
-│       └── services/api.js        # Axios API client
+│   ├── public/
+│   │   └── manifest.json           # PWA manifest
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── LoginPage.jsx       # Authentication
+│   │   │   ├── RegisterPage.jsx    # User registration
+│   │   │   ├── HomePage.jsx        # Skill grid + Priority Review
+│   │   │   ├── SkillDetailPage.jsx # Topics + Mastery + Entry Test
+│   │   │   ├── DashboardPage.jsx   # Per-topic Ebbinghaus dashboard
+│   │   │   ├── QuizPage.jsx        # AI MCQ assessment
+│   │   │   └── TopicAnalyticsPage.jsx # 7-day projection
+│   │   ├── components/
+│   │   │   ├── RetentionGraph.jsx  # Recharts area chart
+│   │   │   └── SystemStatus.jsx    # API/AI health indicators
+│   │   ├── context/AuthContext.jsx # JWT auth state management
+│   │   └── services/api.js        # Axios API client
+│   ├── Dockerfile                  # Multi-stage Docker build (Vite → nginx)
+│   └── vercel.json                 # Vercel SPA deployment config
 │
 ├── server/                         # Node.js Backend (Express)
-│   └── src/
-│       ├── models/
-│       │   ├── User.js             # Auth model (bcrypt)
-│       │   ├── Skill.js            # Skill hierarchy
-│       │   ├── Topic.js            # Learning topics
-│       │   ├── MemoryState.js      # HLR state (M, h, lastCalc)
-│       │   └── Assessment.js       # Quiz results + behavioral data
-│       ├── controllers/
-│       │   ├── skillController.js  # CRUD + cascade delete
-│       │   ├── topicController.js  # CRUD + memoryState enrichment
-│       │   ├── quizController.js   # AI proxy + behavioral scoring
-│       │   └── dashboardController.js # Retention + projection
-│       ├── routes/                 # Express route definitions
-│       ├── middleware/
-│       │   └── authMiddleware.js   # JWT verification
-│       ├── app.js                  # Express configuration
-│       └── server.js               # MongoDB connection + startup
+│   ├── src/
+│   │   ├── models/
+│   │   │   ├── User.js             # Auth model (bcrypt)
+│   │   │   ├── Skill.js            # Skill hierarchy
+│   │   │   ├── Topic.js            # Learning topics
+│   │   │   ├── MemoryState.js      # HLR state (M, h, lastCalc)
+│   │   │   ├── Assessment.js       # Quiz results + behavioral data
+│   │   │   └── Achievement.js      # Gamification schema (Phase 2)
+│   │   ├── controllers/
+│   │   │   ├── skillController.js  # CRUD + cascade delete
+│   │   │   ├── topicController.js  # CRUD + memoryState enrichment
+│   │   │   ├── quizController.js   # AI proxy + behavioral scoring
+│   │   │   └── dashboardController.js # Retention + projection
+│   │   ├── routes/                 # Express route definitions
+│   │   ├── middleware/
+│   │   │   └── authMiddleware.js   # JWT verification
+│   │   ├── app.js                  # Express configuration
+│   │   └── server.js               # MongoDB connection + startup
+│   └── Dockerfile                  # Node.js Docker build
 │
 ├── ai-engine/                      # Python AI Microservice (FastAPI)
 │   ├── main.py                     # Gemini integration + HLR endpoints
-│   └── requirements.txt           # Python dependencies
+│   ├── test_main.py                # Pytest endpoint tests
+│   ├── requirements.txt            # Python dependencies
+│   └── Dockerfile                  # FastAPI Docker build
 │
+├── docker-compose.yml              # Multi-service orchestration
+├── render.yaml                     # Render.com IaC deployment
+├── .env.example                    # Environment variable template
+├── .eslintrc.json                  # ESLint configuration
+├── .prettierrc                     # Prettier formatting rules
 ├── README.md                       # This file
 ├── ARCHITECTURE.md                 # Detailed system architecture
-├── REQUIREMENTS_TRACEABILITY.md     # Functional & non-functional requirements
-└── REQUIREMENTS_CHECKLIST.md       # Granular feature checklist
+├── REQUIREMENTS_TRACEABILITY.md    # Functional & non-functional requirements
+├── REQUIREMENTS_CHECKLIST.md       # Granular feature checklist
+├── SECURITY.md                     # Vulnerability reporting policy
+├── CONTRIBUTING.md                 # Contribution guidelines
+└── CODE_OF_CONDUCT.md              # Contributor Covenant
 ```
 
 ---
@@ -234,7 +270,7 @@ recall/
 
 | Metric | Target | Implementation |
 |--------|--------|----------------|
-| AI Question Generation | < 5 seconds | Gemini 2.0 Flash with 30s timeout; fallback to instant mock questions |
+| AI Question Generation | < 5 seconds | Gemini 1.5 Flash with 30s timeout; fallback to instant mock questions |
 | Page Load Time | < 2 seconds | Vite HMR, code splitting, lazy-loaded routes |
 | Retention Calculation | < 50ms | Local JS math fallback when AI Engine is unreachable |
 | Dashboard Render | < 1 second | Client-side Ebbinghaus computation + Recharts animation |

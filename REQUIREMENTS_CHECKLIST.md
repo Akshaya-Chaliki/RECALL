@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0 (Expo Release)  
 > **Last Updated**: 2026-05-11  
-> **Architecture**: React (Vite) → Node.js/Express → FastAPI (Gemini 2.0 Flash) → MongoDB Atlas
+> **Architecture**: React (Vite) → Node.js/Express → FastAPI (Gemini 1.5 Flash) → MongoDB Atlas
 
 ---
 
@@ -30,7 +30,7 @@
 
 ### Core Value Proposition
 - **Not SRS** — Pure continuous exponential decay modeling (no SM-2 intervals)
-- **AI-Generated Assessments** — Gemini 2.0 Flash produces unique, challenging MCQs
+- **AI-Generated Assessments** — Gemini 1.5 Flash produces unique, challenging MCQs
 - **Behavioral Scoring** — Factors correctness (60%), response latency (20%), and self-reported confidence (20%)
 - **Real-Time Decay Visualization** — Interactive Ebbinghaus curves with zone-based urgency alerts
 
@@ -46,7 +46,7 @@
 | **Icons** | Lucide React | Consistent icon system |
 | **Backend** | Node.js + Express (ES Modules) | REST API, JWT auth, business logic |
 | **AI Engine** | Python FastAPI | Gemini integration, HLR math |
-| **AI Model** | Google Gemini 2.0 Flash | Question/flashcard generation |
+| **AI Model** | Google Gemini 1.5 Flash | Question/flashcard generation |
 | **Database** | MongoDB Atlas (Replica Set) | Persistent storage |
 | **Auth** | JWT (Bearer tokens) + bcrypt | Stateless authentication |
 
@@ -524,5 +524,5 @@ GEMINI_API_KEY=<your-gemini-api-key>
 > **Status**: ✅ Expo-Ready  
 > **Architecture**: Three-tier (React → Express → FastAPI + MongoDB Atlas)  
 > **Core Model**: Ebbinghaus Forgetting Curve with Half-Life Regression  
-> **AI Provider**: Google Gemini 2.0 Flash  
+> **AI Provider**: Google Gemini 1.5 Flash  
 > **Key Differentiator**: No SRS — Pure continuous exponential decay with behavioral scoring

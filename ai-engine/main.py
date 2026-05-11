@@ -39,7 +39,7 @@ if GEMINI_API_KEY:
             top_p=0.95,
         ),
     )
-    print("[OK] Gemini 2.0 Flash configured (temperature=0.8, top_p=0.95).")
+    print("[OK] Gemini 1.5 Flash configured (temperature=0.8, top_p=0.95).")
 else:
     print("[WARN] GEMINI_API_KEY not set. AI engine will use fallback mock questions.")
 
