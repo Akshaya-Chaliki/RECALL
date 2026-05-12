@@ -8,8 +8,12 @@ import quizRoutes from "./routes/quizRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
+import initScheduler from "./services/schedulerService.js";
 
 const app = express();
+
+// Initialize background services
+initScheduler();
 
 // Middleware
 app.use(cors({

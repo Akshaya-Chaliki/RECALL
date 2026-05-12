@@ -7,6 +7,28 @@ import MemoryState from "../models/MemoryState.js";
 const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8001";
 
 /**
+ * In-memory response cache for AI-generated content.
+ * Provides sub-50ms response times for repeated topic requests,
+ * reducing Gemini API pressure and fulfilling <200ms latency targets.
+ * TTL: 5 minutes (300,000ms) per entry.
+ */
+const responseCache = {};
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+function getCached(key) {
+  const entry = responseCache[key];
+  if (entry && Date.now() - entry.timestamp < CACHE_TTL_MS) {
+    return entry.data;
+  }
+  if (entry) delete responseCache[key]; // Expired
+  return null;
+}
+
+function setCache(key, data) {
+  responseCache[key] = { data, timestamp: Date.now() };
+}
+
+/**
  * @desc    Generate flashcards via AI Engine (10 pairs)
  * @route   GET /api/quiz/:topicId/flashcards
  * @access  Private
@@ -14,6 +36,12 @@ const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://127.0.0.1:8001";
 export const getFlashcards = async (req, res) => {
   try {
     const { topicId } = req.params;
+
+    // Check cache first for sub-200ms response
+    const cachedFlashcards = getCached(`flashcards:${topicId}`);
+    if (cachedFlashcards) {
+      return res.status(200).json({ success: true, data: cachedFlashcards, cached: true });
+    }
 
     const topic = await Topic.findOne({ _id: topicId, user: req.user._id });
     if (!topic) {
@@ -24,6 +52,7 @@ export const getFlashcards = async (req, res) => {
       topic_name: topic.name,
     }, { timeout: 30000 }); // 30 second timeout
 
+    setCache(`flashcards:${topicId}`, response.data);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error("Error in getFlashcards proxy:", error.message);
@@ -156,6 +185,12 @@ export const getQuestions = async (req, res) => {
   try {
     const { topicId } = req.params;
 
+    // Check cache first for sub-200ms response
+    const cachedQuestions = getCached(`questions:${topicId}`);
+    if (cachedQuestions) {
+      return res.status(200).json({ success: true, data: cachedQuestions, cached: true });
+    }
+
     // 1. Fetch Topic name from DB
     const topic = await Topic.findOne({ _id: topicId, user: req.user._id });
     if (!topic) {
@@ -168,7 +203,8 @@ export const getQuestions = async (req, res) => {
       count: 5,
     }, { timeout: 30000 });
 
-    // 3. Return the 5 AI MCQs to the frontend
+    // 3. Cache and return the 5 AI MCQs to the frontend
+    setCache(`questions:${topicId}`, response.data);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error("[getQuestions] Error:", error.message);
